@@ -198,6 +198,9 @@
       gap: 24px;
     }
 
+    /* Faixa mobile de nome+preço — oculta no desktop */
+    .svc-mobile-meta { display: none; }
+
     .gallery-grid-main {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -348,8 +351,88 @@
         padding: 10px 14px !important;
       }
 
+      /* ── SVC-CARDS: 2 colunas compactas no mobile ──────────────────── */
       .svc-grid-main {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+      }
+
+      /* Foto: altura reduzida, sem overlay de nome/preço */
+      .svc-card > div:first-child {
+        height: 110px !important;
+      }
+
+      /* Badge categoria: fonte menor, reposicionado */
+      .svc-card > div:first-child > div:nth-child(3) {
+        font-size: 9px !important;
+        padding: 2px 7px !important;
+        top: 8px !important;
+        left: 8px !important;
+        letter-spacing: 0.08em !important;
+      }
+
+      /* Ocultar overlays de nome e preço (ficam fora da foto no mobile) */
+      .svc-price-overlay,
+      .svc-name-overlay {
+        display: none !important;
+      }
+
+      /* Faixa mobile: nome + preço abaixo da foto */
+      .svc-mobile-meta {
+        display: flex !important;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 6px;
+        padding: 8px 10px 0;
+      }
+      .svc-mobile-name {
+        font-family: 'Playfair Display', serif;
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--white);
+        line-height: 1.3;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      .svc-mobile-price {
+        font-family: 'Playfair Display', serif;
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--gold);
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+
+      /* Corpo do card: padding compacto */
+      .svc-card > div:last-child {
+        padding: 8px 10px 10px !important;
+        gap: 0 !important;
+      }
+
+      /* Descrição: ocultar */
+      .svc-card > div:last-child > p {
+        display: none !important;
+      }
+
+      /* Botão: compacto — troca o texto por versão curta */
+      .svc-book-btn {
+        padding: 9px 4px !important;
+        letter-spacing: 0 !important;
+      }
+      .svc-book-btn-text {
+        display: none !important;
+      }
+      .svc-book-btn::after {
+        content: 'Agendar →';
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-family: 'Outfit', sans-serif;
       }
 
       .gallery-grid-main {
@@ -1373,23 +1456,29 @@
                     {/* Badge categoria */}
                     <div style={{ position: 'absolute', top: 16, left: 16, background: 'rgba(0,0,0,0.75)', border: '1px solid rgba(201,168,76,0.35)', color: 'var(--gold)', padding: '4px 12px', fontSize: 11, fontWeight: 600, letterSpacing: '0.15em', textTransform: 'uppercase', borderRadius: 2 }}>{s.category}</div>
                     {/* Preço em destaque */}
-                    <div style={{ position: 'absolute', bottom: 16, right: 16, textAlign: 'right' }}>
+                    <div className="svc-price-overlay" style={{ position: 'absolute', bottom: 16, right: 16, textAlign: 'right' }}>
                       <div style={{ fontFamily: 'Playfair Display', fontSize: 28, fontWeight: 700, color: 'var(--gold)', lineHeight: 1 }}>{fmtCurrency(s.unitPrice)}</div>
                       <div style={{ fontSize: 11, color: 'rgba(201,168,76,0.6)', marginTop: 2 }}>⏱ {s.durationMinutes || 60} min</div>
                     </div>
                     {/* Nome sobre a foto */}
-                    <div style={{ position: 'absolute', bottom: 16, left: 16 }}>
+                    <div className="svc-name-overlay" style={{ position: 'absolute', bottom: 16, left: 16 }}>
                       <div style={{ fontFamily: 'Playfair Display', fontSize: 22, fontWeight: 700, color: 'var(--white)', lineHeight: 1.2 }}>{s.name}</div>
                     </div>
+                  </div>
+
+                  {/* Faixa mobile: nome + preço abaixo da foto */}
+                  <div className="svc-mobile-meta">
+                    <span className="svc-mobile-name">{s.name}</span>
+                    <span className="svc-mobile-price">{fmtCurrency(s.unitPrice)}</span>
                   </div>
 
                   {/* Corpo do card */}
                   <div style={{ padding: '20px 24px 24px', display: 'flex', flexDirection: 'column', gap: 16, flex: 1 }}>
                     {s.details && <p style={{ fontSize: 14, color: '#777', lineHeight: 1.7, margin: 0 }}>{s.details}</p>}
-                    <button onClick={onBook} style={{ width: '100%', background: 'var(--gold)', color: 'var(--black)', border: 'none', padding: '14px', fontWeight: 700, fontSize: 14, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: 2, fontFamily: 'Outfit', transition: 'all 0.2s', marginTop: 'auto' }}
+                    <button className="svc-book-btn" onClick={onBook} style={{ width: '100%', background: 'var(--gold)', color: 'var(--black)', border: 'none', padding: '14px', fontWeight: 700, fontSize: 14, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: 2, fontFamily: 'Outfit', transition: 'all 0.2s', marginTop: 'auto' }}
                       onMouseEnter={e => { e.target.style.background = 'var(--gold-light)'; e.target.style.boxShadow = '0 4px 20px rgba(201,168,76,0.3)'; }}
                       onMouseLeave={e => { e.target.style.background = 'var(--gold)'; e.target.style.boxShadow = 'none'; }}>
-                      Agendar este Serviço →
+                      <span className="svc-book-btn-text">Agendar este Serviço →</span>
                     </button>
                   </div>
                 </div>
