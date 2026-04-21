@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agendar com César — Barbearia P47</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --gold: #C9A84C; --gold-light: #e0c06a; --gold-dark: #9a7930;
+      --black: #0A0B0D; --dark: #121417; --dark2: #1A1D21; --dark3: #24292E;
+      --white: #F5F7F9; --gray: #8E9196;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: 'Outfit', sans-serif; min-height: 100vh; overflow-x: hidden; }
+    ::selection { background: var(--gold); color: var(--black); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 2px; }
+    input::placeholder, textarea::placeholder { color: #444; }
+    input:focus, textarea:focus { outline: none; }
+    @keyframes spin    { to { transform: rotate(360deg); } }
+    @keyframes fadeIn  { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+    @keyframes pulse   { 0%,100% { opacity:.4; } 50% { opacity:1; } }
+    @keyframes ringPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.4); } 50% { box-shadow: 0 0 0 12px rgba(201,168,76,0); } }
+    @keyframes float   { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-6px); } }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+  const { useState, useEffect, useMemo, useRef } = React;
+
+  // ── DADOS DO BARBEIRO ────────────────────────────────────────────────
+  const BARBER = {
+    id: 'emp-002',
+    name: 'César',
+    firstName: 'César',
+    position: 'Barbeiro Sênior',
+    specialty: 'Cortes Clássicos · Navalhação · Acabamento',
+    initials: 'CS',
+    accentBg: '#0a1a2a',
+    badge: 'Sênior',
+    years: '10+',
+    rating: '5.0',
+  };
+
+  // ── SERVIÇOS ─────────────────────────────────────────────────────────
+  const SERVICES = [
+    { id:'svc-001', name:'Corte Masculino Premium', details:'Geometria do Corte personalizada para o formato do seu rosto.', unitPrice:'65.00', durationMinutes:45, img:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=400&fit=crop&q=80' },
+    { id:'svc-002', name:'Barboterapia',            details:'Modelagem completa com produtos premium e toalha quente.',     unitPrice:'55.00', durationMinutes:40, img:'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&h=400&fit=crop&q=80' },
+    { id:'svc-003', name:'Penteados Modernos',      details:'Finalização com pomada, wax ou gel. Do casual ao social.',     unitPrice:'45.00', durationMinutes:30, img:'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&h=400&fit=crop&q=80' },
+    { id:'svc-004', name:'Visagismo',               details:'Consultoria de estilo: o corte ideal para o seu rosto.',       unitPrice:'120.00',durationMinutes:60, img:'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=400&fit=crop&q=80' },
+  ];
+
+  // ── HORÁRIOS ─────────────────────────────────────────────────────────
+  const WORKING_DAYS = [
+    { dayOfWeek:0, isWorkingDay:false, timeSlots:[] },
+    { dayOfWeek:1, isWorkingDay:true,  timeSlots:[{startTime:'09:00',endTime:'12:00'},{startTime:'14:00',endTime:'20:00'}] },
+    { dayOfWeek:2, isWorkingDay:true,  timeSlots:[{startTime:'09:00',endTime:'12:00'},{startTime:'14:00',endTime:'20:00'}] },
+    { dayOfWeek:3, isWorkingDay:true,  timeSlots:[{startTime:'09:00',endTime:'12:00'},{startTime:'14:00',endTime:'20:00'}] },
+    { dayOfWeek:4, isWorkingDay:true,  timeSlots:[{startTime:'09:00',endTime:'12:00'},{startTime:'14:00',endTime:'20:00'}] },
+    { dayOfWeek:5, isWorkingDay:true,  timeSlots:[{startTime:'09:00',endTime:'12:00'},{startTime:'14:00',endTime:'20:00'}] },
+    { dayOfWeek:6, isWorkingDay:true,  timeSlots:[{startTime:'09:00',endTime:'18:00'}] },
+  ];
+
+  // ── HELPERS ──────────────────────────────────────────────────────────
+  const DAY_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const DAY_FULL  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const fmtCurrency = v => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(parseFloat(v||0));
+  const fmtDate     = d => d.toISOString().split('T')[0];
+  const fmtPhone    = p => { const c=p.replace(/\D/g,''); return c.length===11?`(${c.slice(0,2)}) ${c.slice(2,7)}-${c.slice(7)}`:p; };
+  function getWeekStart(date) { const d=new Date(date); d.setDate(d.getDate()-d.getDay()); d.setHours(0,0,0,0); return d; }
+  function seededRnd(seed)    { let s=Math.abs(seed)%2147483647; return ()=>{ s=(s*16807)%2147483647; return (s-1)/2147483646; }; }
+  function dateToSeed(ds)     { return ds.split('').reduce((a,c)=>a+c.charCodeAt(0),0); }
+  function generateSlots(dayOfWeek, durationMin) {
+    const wd = WORKING_DAYS.find(d=>d.dayOfWeek===dayOfWeek);
+    if (!wd||!wd.isWorkingDay) return [];
+    const slots=[];
+    for (const ts of wd.timeSlots||[]) {
+      const [sh,sm]=ts.startTime.split(':').map(Number);
+      const [eh,em]=ts.endTime.split(':').map(Number);
+      const start=sh*60+sm, end=eh*60+em;
+      for (let t=start; t+durationMin<=end; t+=30) {
+        const s=`${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
+        const e2=t+durationMin;
+        slots.push({ startTime:s, endTime:`${String(Math.floor(e2/60)).padStart(2,'0')}:${String(e2%60).padStart(2,'0')}` });
+      }
+    }
+    return slots;
+  }
+  async function mockBook(payload) {
+    await new Promise(r=>setTimeout(r,800));
+    const svcs   = payload.serviceIds.map(id=>SERVICES.find(s=>s.id===id)).filter(Boolean);
+    const total  = svcs.reduce((sum,s)=>sum+parseFloat(s.unitPrice),0);
+    const dur    = svcs.reduce((sum,s)=>sum+s.durationMinutes,0);
+    const [bh,bm]= payload.time.split(':').map(Number);
+    const endMin = bh*60+bm+dur;
+    return {
+      orderDisplayNumber: Math.floor(Math.random()*9000)+1000,
+      totalPrice: total.toFixed(2),
+      endTime:`${String(Math.floor(endMin/60)).padStart(2,'0')}:${String(endMin%60).padStart(2,'0')}`,
+    };
+  }
+
+  // ── COMPONENTES BASE ─────────────────────────────────────────────────
+  function Spinner() {
+    return <div style={{display:'flex',justifyContent:'center',padding:32}}>
+      <div style={{width:24,height:24,border:'2px solid #222',borderTopColor:'var(--gold)',borderRadius:'50%',animation:'spin 0.8s linear infinite'}}/>
+    </div>;
+  }
+  function Stars() {
+    return <div style={{display:'flex',gap:3}}>{[1,2,3,4,5].map(i=>(
+      <svg key={i} width="13" height="13" viewBox="0 0 12 12" fill="var(--gold)">
+        <polygon points="6,1 7.5,4.5 11,4.8 8.5,7 9.2,10.5 6,8.7 2.8,10.5 3.5,7 1,4.8 4.5,4.5"/>
+      </svg>
+    ))}</div>;
+  }
+
+  // ── HEADER ───────────────────────────────────────────────────────────
+  function Header() {
+    return (
+      <header style={{position:'fixed',top:0,left:0,right:0,zIndex:100,background:'rgba(10,11,13,0.95)',borderBottom:'1px solid #1a1a1a',backdropFilter:'blur(12px)',height:60,display:'flex',alignItems:'center',justifyContent:'space-between',padding:'0 24px'}}>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <img src="assets/logotipo.png" alt="P47 Logo" style={{height:32,objectFit:'contain'}} />
+        </div>
+        <a href="index.html" style={{display:'flex',alignItems:'center',gap:6,color:'#888',textDecoration:'none',fontSize:12,letterSpacing:'0.05em',transition:'color 0.2s'}}
+          onMouseEnter={e=>e.currentTarget.style.color='var(--gold)'} onMouseLeave={e=>e.currentTarget.style.color='#888'}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Conhecer a Barbearia P47
+        </a>
+      </header>
+    );
+  }
+
+  // ── LANDING ──────────────────────────────────────────────────────────
+  function Landing({ onBook, onBookService }) {
+    return (
+      <div style={{paddingTop:60,animation:'fadeIn 0.4s ease'}}>
+
+        {/* Hero do barbeiro */}
+        <div style={{textAlign:'center',padding:'60px 24px 48px',background:`linear-gradient(180deg,${BARBER.accentBg}22 0%,transparent 100%)`}}>
+          {/* Avatar */}
+          <div style={{position:'relative',display:'inline-block',marginBottom:24}}>
+            <div style={{
+              width:110,height:110,borderRadius:'50%',
+              background:`radial-gradient(circle at 35% 35%,${BARBER.accentBg},#0a0a0a)`,
+              border:'2px solid var(--gold)',display:'flex',alignItems:'center',justifyContent:'center',
+              animation:'ringPulse 3s ease-in-out infinite',margin:'0 auto',
+            }}>
+              <span style={{fontFamily:'Playfair Display',fontSize:36,fontWeight:700,color:'var(--gold)'}}>{BARBER.initials}</span>
+            </div>
+            {BARBER.badge && (
+              <div style={{position:'absolute',top:-6,right:-6,background:'var(--gold)',color:'var(--black)',fontSize:8,fontWeight:700,padding:'3px 7px',borderRadius:2,letterSpacing:'0.12em',textTransform:'uppercase',whiteSpace:'nowrap'}}>
+                {BARBER.badge}
+              </div>
+            )}
+          </div>
+
+          {/* Nome e cargo */}
+          <h1 style={{fontFamily:'Playfair Display',fontSize:'clamp(28px,7vw,42px)',fontWeight:700,marginBottom:6}}>{BARBER.name}</h1>
+          <div style={{fontSize:11,color:'var(--gold)',fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',marginBottom:10}}>{BARBER.position}</div>
+          <div style={{fontSize:13,color:'#666',marginBottom:20,letterSpacing:'0.04em'}}>{BARBER.specialty}</div>
+
+          {/* Rating */}
+          <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,marginBottom:32}}>
+            <Stars/>
+            <span style={{fontSize:13,color:'#888'}}>{BARBER.rating} · {BARBER.years} anos de experiência</span>
+          </div>
+
+          {/* CTA principal */}
+          <button onClick={onBook} style={{background:'var(--gold)',color:'var(--black)',border:'none',padding:'16px 40px',fontSize:15,fontWeight:700,letterSpacing:'0.1em',textTransform:'uppercase',cursor:'pointer',borderRadius:2,fontFamily:'Outfit',boxShadow:'0 4px 24px rgba(201,168,76,0.3)',transition:'all 0.2s'}}
+            onMouseEnter={e=>{e.target.style.background='var(--gold-light)';e.target.style.transform='translateY(-2px)';}}
+            onMouseLeave={e=>{e.target.style.background='var(--gold)';e.target.style.transform='none';}}>
+            Agendar Agora →
+          </button>
+        </div>
+
+        {/* Linha divisória */}
+        <div style={{height:1,background:'linear-gradient(90deg,transparent,var(--gold),transparent)',opacity:0.3}}/>
+
+        {/* Serviços */}
+        <div style={{padding:'40px 24px 60px',maxWidth:600,margin:'0 auto'}}>
+          <div style={{fontSize:11,color:'var(--gold)',fontWeight:600,letterSpacing:'0.2em',textTransform:'uppercase',marginBottom:4,textAlign:'center'}}>Escolha seu serviço</div>
+          <p style={{textAlign:'center',color:'#666',fontSize:13,marginBottom:28}}>Toque em um serviço para iniciar o agendamento</p>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+            {SERVICES.map(s=>(
+              <div key={s.id} onClick={()=>onBookService(s.id)}
+                style={{background:'var(--dark)',border:'1px solid #1e1e1e',borderRadius:4,overflow:'hidden',cursor:'pointer',transition:'all 0.2s'}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor='var(--gold-dark)';e.currentTarget.style.transform='translateY(-3px)';}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor='#1e1e1e';e.currentTarget.style.transform='none';}}>
+                <div style={{height:110,overflow:'hidden',background:'#0d0d0d',position:'relative'}}>
+                  <img src={s.img} alt={s.name} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/>
+                  <div style={{position:'absolute',inset:0,background:'linear-gradient(0deg,rgba(0,0,0,0.7) 0%,transparent 60%)'}}/>
+                  <div style={{position:'absolute',bottom:8,right:8,fontFamily:'Playfair Display',fontSize:16,fontWeight:700,color:'var(--gold)'}}>{fmtCurrency(s.unitPrice)}</div>
+                </div>
+                <div style={{padding:'12px 14px 14px'}}>
+                  <div style={{fontSize:13,fontWeight:600,color:'var(--white)',marginBottom:3}}>{s.name}</div>
+                  <div style={{fontSize:11,color:'#555'}}>⏱ {s.durationMinutes} min</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Rodapé */}
+        <div style={{borderTop:'1px solid #111',padding:'24px',textAlign:'center'}}>
+          <a href="index.html" style={{color:'#444',textDecoration:'none',fontSize:13,letterSpacing:'0.04em',transition:'color 0.2s'}}
+            onMouseEnter={e=>e.currentTarget.style.color='var(--gold)'} onMouseLeave={e=>e.currentTarget.style.color='#444'}>
+            Conhecer todos os serviços da Barbearia P47 →
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // ── BOOKING FLOW ─────────────────────────────────────────────────────
+  function BookingFlow({ initialService, onBack }) {
+    const [step, setStep]               = useState(1);
+    const [selectedSvcs, setSelectedSvcs] = useState(initialService ? [initialService] : []);
+    const [weekStart, setWeekStart]     = useState(getWeekStart(new Date()));
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [allSlots, setAllSlots]       = useState([]);
+    const [availSlots, setAvailSlots]   = useState([]);
+    const [selectedSlot, setSelectedSlot] = useState(null);
+    const [slotsLoading, setSlotsLoading] = useState(false);
+    const [name, setName]   = useState('');
+    const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
+    const [obs, setObs]     = useState('');
+    const [submitting, setSubmitting] = useState(false);
+    const [booked, setBooked]         = useState(false);
+    const [bookingResult, setBookingResult] = useState(null);
+
+    const today    = useMemo(()=>{ const d=new Date(); d.setHours(0,0,0,0); return d; },[]);
+    const weekDays = Array.from({length:7},(_,i)=>{ const d=new Date(weekStart); d.setDate(d.getDate()+i); return d; });
+
+    const selectedSvcsData = useMemo(()=>selectedSvcs.map(id=>SERVICES.find(s=>s.id===id)).filter(Boolean),[selectedSvcs]);
+    const totalPrice    = selectedSvcsData.reduce((sum,s)=>sum+parseFloat(s.unitPrice),0);
+    const totalDuration = selectedSvcsData.reduce((sum,s)=>sum+s.durationMinutes,0);
+
+    const toggleSvc = id => setSelectedSvcs(prev=>prev.includes(id)?prev.filter(x=>x!==id):[...prev,id]);
+
+    useEffect(()=>{
+      if (!selectedDate) return;
+      setSlotsLoading(true); setAllSlots([]); setAvailSlots([]); setSelectedSlot(null);
+      const dur    = totalDuration||60;
+      const all    = generateSlots(selectedDate.getDay(), dur);
+      const rand   = seededRnd(dateToSeed(fmtDate(selectedDate)));
+      const avail  = all.filter(()=>rand()>0.3);
+      setAllSlots(all); setAvailSlots(avail); setSlotsLoading(false);
+    },[selectedDate, totalDuration]);
+
+    const selectDate = ds => { const d=new Date(ds+'T12:00:00'); setSelectedDate(d); setSelectedSlot(null); };
+    const navWeek   = dir => {
+      const ns=new Date(weekStart); ns.setDate(ns.getDate()+dir*7);
+      if (ns>=getWeekStart(new Date())) { setWeekStart(ns); setSelectedDate(null); setSelectedSlot(null); }
+    };
+    const canNext = ()=>{
+      if (step===1) return selectedSvcs.length>0;
+      if (step===2) return !!(selectedDate&&selectedSlot);
+      if (step===3) return name.trim().length>1&&phone.replace(/\D/g,'').length>=10;
+      return false;
+    };
+    const handleConfirm = async ()=>{
+      setSubmitting(true);
+      try {
+        const res = await mockBook({ serviceIds:selectedSvcs, date:fmtDate(selectedDate), time:selectedSlot.startTime, customerName:name, customerPhone:phone, customerEmail:email, observation:obs });
+        setBookingResult(res); setBooked(true);
+      } catch(e) { alert('Erro ao confirmar. Tente novamente.'); }
+      finally { setSubmitting(false); }
+    };
+
+    const stepLabels = ['Serviço','Data & Hora','Seus dados','Confirmar'];
+    const inp = { width:'100%',background:'#161616',border:'1px solid #2a2a2a',borderRadius:2,padding:'12px 14px',color:'var(--white)',fontSize:14,fontFamily:'Outfit' };
+
+    if (booked) return (
+      <div style={{minHeight:'100vh',paddingTop:60,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:'100px 24px 60px',textAlign:'center',animation:'fadeIn 0.3s ease'}}>
+        <div style={{width:72,height:72,border:'2px solid var(--gold)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 24px',fontSize:30,color:'var(--gold)'}}>✓</div>
+        <div style={{fontFamily:'Playfair Display',fontSize:28,fontWeight:700,marginBottom:8}}>Agendamento Confirmado!</div>
+        <div style={{color:'#888',fontSize:14,lineHeight:2,marginBottom:28}}>
+          <div>{selectedSvcsData.map(s=>s.name).join(' + ')}</div>
+          <div>com <strong style={{color:'var(--white)'}}>{BARBER.name}</strong></div>
+          <div>{DAY_FULL[selectedDate.getDay()]}, {selectedDate.toLocaleDateString('pt-BR')} às <strong style={{color:'var(--gold)'}}>{selectedSlot.startTime}</strong></div>
+          <div>Total: <strong style={{color:'var(--gold)'}}>{fmtCurrency(bookingResult.totalPrice)}</strong></div>
+          <div>Pedido: <strong style={{color:'var(--white)'}}>#{bookingResult.orderDisplayNumber}</strong></div>
+        </div>
+        <div style={{background:'#111',border:'1px solid #1e1e1e',borderRadius:3,padding:'16px 20px',fontSize:13,color:'#666',marginBottom:28,lineHeight:1.8,maxWidth:340}}>
+          Confirmação enviada via WhatsApp em breve.<br/>
+          Dúvidas? <a href="https://wa.me/5512981365015" style={{color:'var(--gold)',textDecoration:'none'}}>(12) 98136-5015</a>
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:12,alignItems:'center'}}>
+          <button onClick={onBack} style={{background:'var(--gold)',color:'var(--black)',border:'none',padding:'12px 32px',fontWeight:700,fontSize:14,cursor:'pointer',borderRadius:2,fontFamily:'Outfit'}}>Novo Agendamento</button>
+          <a href="index.html" style={{color:'#555',fontSize:12,textDecoration:'none'}}>Conhecer a Barbearia P47 →</a>
+        </div>
+      </div>
+    );
+
+    return (
+      <div style={{paddingTop:60,maxWidth:600,margin:'0 auto',padding:'80px 24px 60px',animation:'fadeIn 0.3s ease'}}>
+
+        {/* Barra de steps */}
+        <div style={{marginBottom:36}}>
+          <div style={{display:'flex',alignItems:'center',marginBottom:20}}>
+            <button onClick={onBack} style={{background:'none',border:'none',color:'#666',cursor:'pointer',fontSize:13,padding:0,display:'flex',alignItems:'center',gap:6,fontFamily:'Outfit'}}
+              onMouseEnter={e=>e.currentTarget.style.color='var(--gold)'} onMouseLeave={e=>e.currentTarget.style.color='#666'}>
+              ← {BARBER.firstName}
+            </button>
+          </div>
+          <div style={{display:'flex',gap:0}}>
+            {stepLabels.map((label,i)=>{
+              const n=i+1,active=step===n,done=step>n;
+              return (
+                <div key={n} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',position:'relative'}}>
+                  {i<stepLabels.length-1&&<div style={{position:'absolute',top:14,left:'50%',right:'-50%',height:1,background:done?'var(--gold)':'#2a2a2a',transition:'background 0.3s'}}/>}
+                  <div style={{width:28,height:28,borderRadius:'50%',background:done?'var(--gold)':active?'transparent':'#1a1a1a',border:`1.5px solid ${done||active?'var(--gold)':'#333'}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:600,color:done?'var(--black)':active?'var(--gold)':'#555',zIndex:1,transition:'all 0.3s'}}>
+                    {done?'✓':n}
+                  </div>
+                  <div style={{fontSize:10,color:active?'var(--gold)':done?'#888':'#555',marginTop:5,fontWeight:active?600:400}}>{label}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Step 1 — Serviços */}
+        {step===1&&(
+          <div style={{animation:'fadeIn 0.25s ease'}}>
+            <div style={{fontSize:12,color:'#888',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:16}}>Escolha o(s) serviço(s)</div>
+            <div style={{display:'grid',gap:10}}>
+              {SERVICES.map(s=>{
+                const sel=selectedSvcs.includes(s.id);
+                return (
+                  <div key={s.id} onClick={()=>toggleSvc(s.id)} style={{display:'flex',gap:14,padding:'14px 16px',border:'1px solid',borderColor:sel?'var(--gold)':'#2a2a2a',borderRadius:3,cursor:'pointer',background:sel?'rgba(201,168,76,0.06)':'#161616',transition:'all 0.2s',alignItems:'center'}}>
+                    <img src={s.img} alt={s.name} style={{width:64,height:64,objectFit:'cover',borderRadius:2,flexShrink:0}}/>
+                    <div style={{flex:1}}>
+                      <div style={{fontWeight:600,fontSize:14,color:sel?'var(--white)':'#ccc',marginBottom:2}}>{s.name}</div>
+                      <div style={{fontSize:11,color:'#666'}}>⏱ {s.durationMinutes} min</div>
+                    </div>
+                    <div style={{textAlign:'right',flexShrink:0}}>
+                      <div style={{color:'var(--gold)',fontWeight:700,fontSize:16,fontFamily:'Playfair Display'}}>{fmtCurrency(s.unitPrice)}</div>
+                      <div style={{width:20,height:20,borderRadius:'50%',border:`2px solid ${sel?'var(--gold)':'#333'}`,background:sel?'var(--gold)':'transparent',display:'flex',alignItems:'center',justifyContent:'center',marginLeft:'auto',marginTop:6,fontSize:11,color:'var(--black)',fontWeight:700,transition:'all 0.2s'}}>{sel?'✓':''}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {selectedSvcs.length>0&&(
+              <div style={{marginTop:16,padding:'12px 16px',background:'#161616',border:'1px solid #2a2a2a',borderRadius:3,display:'flex',justifyContent:'space-between',fontSize:13}}>
+                <span style={{color:'#888'}}>{selectedSvcs.length} serviço{selectedSvcs.length>1?'s':''}</span>
+                <span style={{color:'var(--gold)',fontWeight:700}}>{fmtCurrency(totalPrice)} · {totalDuration} min</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Step 2 — Data & Hora */}
+        {step===2&&(
+          <div style={{animation:'fadeIn 0.25s ease'}}>
+            {/* Calendário */}
+            <div style={{marginBottom:24}}>
+              <div style={{fontSize:12,color:'#888',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:12}}>Escolha o dia</div>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <button onClick={()=>navWeek(-1)} style={{width:36,height:36,background:'none',border:'1px solid #2a2a2a',borderRadius:2,color:'#888',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>←</button>
+                <div style={{display:'flex',gap:6,flex:1,overflowX:'auto'}}>
+                  {weekDays.map((d,i)=>{
+                    const past=d<today, sel=selectedDate&&fmtDate(d)===fmtDate(selectedDate);
+                    const works=WORKING_DAYS.find(w=>w.dayOfWeek===d.getDay())?.isWorkingDay;
+                    return (
+                      <button key={i} disabled={past||!works} onClick={()=>selectDate(fmtDate(d))}
+                        style={{flexShrink:0,flex:1,minWidth:46,padding:'10px 4px',border:'1px solid',borderColor:sel?'var(--gold)':'#2a2a2a',background:sel?'rgba(201,168,76,0.1)':'#161616',borderRadius:2,cursor:(past||!works)?'not-allowed':'pointer',textAlign:'center',opacity:(past||!works)?0.3:1,transition:'all 0.2s'}}>
+                        <div style={{fontSize:9,color:sel?'var(--gold)':'#666',textTransform:'uppercase',marginBottom:3}}>{DAY_SHORT[d.getDay()]}</div>
+                        <div style={{fontSize:18,fontWeight:700,fontFamily:'Playfair Display',color:sel?'var(--gold)':'#aaa',lineHeight:1}}>{d.getDate()}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+                <button onClick={()=>navWeek(1)} style={{width:36,height:36,background:'none',border:'1px solid #2a2a2a',borderRadius:2,color:'#888',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>→</button>
+              </div>
+            </div>
+            {/* Horários */}
+            {selectedDate&&(
+              <div>
+                <div style={{fontSize:12,color:'#888',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:12}}>Horários disponíveis</div>
+                {slotsLoading?<Spinner/>:allSlots.length===0?(
+                  <div style={{color:'#555',fontSize:13,textAlign:'center',padding:16}}>Sem horários para este dia</div>
+                ):(
+                  <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+                    {(()=>{
+                      const avSet=new Set(availSlots.map(s=>s.startTime));
+                      return allSlots.map(slot=>{
+                        const avail=avSet.has(slot.startTime),isSel=selectedSlot?.startTime===slot.startTime;
+                        return <button key={slot.startTime} disabled={!avail} onClick={()=>setSelectedSlot(slot)}
+                          style={{padding:'10px 16px',border:'1px solid',borderColor:isSel?'var(--gold)':avail?'#2a2a2a':'#1a1a1a',borderRadius:2,background:isSel?'rgba(201,168,76,0.12)':avail?'#161616':'#0d0d0d',color:isSel?'var(--gold)':avail?'#aaa':'#333',fontSize:13,cursor:avail?'pointer':'not-allowed',fontFamily:'Outfit',fontWeight:isSel?600:400,textDecoration:!avail?'line-through':'none',transition:'all 0.2s'}}>
+                          {slot.startTime}
+                        </button>;
+                      });
+                    })()}
+                  </div>
+                )}
+              </div>
+            )}
+            {!selectedDate&&<div style={{textAlign:'center',padding:24,color:'#555',fontSize:13}}>Selecione um dia para ver os horários</div>}
+          </div>
+        )}
+
+        {/* Step 3 — Dados pessoais */}
+        {step===3&&(
+          <div style={{animation:'fadeIn 0.25s ease',display:'grid',gap:16}}>
+            <div style={{background:'#161616',border:'1px solid #1e1e1e',borderRadius:3,padding:'12px 16px',fontSize:13,color:'#888'}}>
+              {selectedSvcsData.map(s=>s.name).join(' + ')} · {DAY_FULL[selectedDate.getDay()]}, {selectedDate.toLocaleDateString('pt-BR')} às <strong style={{color:'var(--gold)'}}>{selectedSlot.startTime}</strong>
+            </div>
+            {[
+              {label:'Seu nome *',  val:name,  set:setName,  type:'text',  ph:'Nome completo'},
+              {label:'WhatsApp *',  val:phone, set:setPhone, type:'tel',   ph:'(12) 9XXXX-XXXX'},
+              {label:'E-mail',      val:email, set:setEmail, type:'email', ph:'seu@email.com'},
+            ].map(f=>(
+              <div key={f.label}>
+                <label style={{display:'block',fontSize:11,color:'#888',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>{f.label}</label>
+                <input type={f.type} value={f.val} onChange={e=>f.set(e.target.value)} placeholder={f.ph} style={inp}
+                  onFocus={e=>e.target.style.borderColor='var(--gold)'} onBlur={e=>e.target.style.borderColor='#2a2a2a'}/>
+              </div>
+            ))}
+            <div>
+              <label style={{display:'block',fontSize:11,color:'#888',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:6}}>Observação</label>
+              <textarea value={obs} onChange={e=>setObs(e.target.value)} placeholder="Alguma preferência?" rows={3} style={{...inp,resize:'vertical'}}
+                onFocus={e=>e.target.style.borderColor='var(--gold)'} onBlur={e=>e.target.style.borderColor='#2a2a2a'}/>
+            </div>
+          </div>
+        )}
+
+        {/* Step 4 — Resumo */}
+        {step===4&&(
+          <div style={{animation:'fadeIn 0.25s ease'}}>
+            <div style={{background:'#161616',border:'1px solid #1e1e1e',borderRadius:3,padding:20,marginBottom:16}}>
+              <div style={{fontSize:11,color:'#666',letterSpacing:'0.1em',textTransform:'uppercase',marginBottom:14}}>Resumo do agendamento</div>
+              {[
+                {label:'Profissional', value:BARBER.name},
+                {label:'Data',        value:`${DAY_FULL[selectedDate.getDay()]}, ${selectedDate.toLocaleDateString('pt-BR')}`},
+                {label:'Horário',     value:`${selectedSlot.startTime} — ${selectedSlot.endTime}`,gold:true},
+                {label:'Cliente',     value:name},
+                {label:'WhatsApp',    value:fmtPhone(phone)},
+                email&&{label:'E-mail',value:email},
+              ].filter(Boolean).map(row=>(
+                <div key={row.label} style={{display:'flex',justifyContent:'space-between',padding:'7px 0',borderBottom:'1px solid #1e1e1e'}}>
+                  <span style={{fontSize:13,color:'#888'}}>{row.label}</span>
+                  <span style={{fontSize:13,fontWeight:500,color:row.gold?'var(--gold)':'var(--white)'}}>{row.value}</span>
+                </div>
+              ))}
+              <div style={{marginTop:14}}>
+                <div style={{fontSize:11,color:'#666',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:8}}>Serviços</div>
+                {selectedSvcsData.map(s=>(
+                  <div key={s.id} style={{display:'flex',justifyContent:'space-between',fontSize:13,padding:'3px 0'}}>
+                    <span style={{color:'#ccc'}}>{s.name}</span>
+                    <span style={{color:'var(--gold)'}}>{fmtCurrency(s.unitPrice)}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{display:'flex',justifyContent:'space-between',marginTop:12,paddingTop:12,borderTop:'1px solid #1e1e1e'}}>
+                <span style={{fontWeight:600}}>Total</span>
+                <span style={{color:'var(--gold)',fontWeight:700,fontSize:20,fontFamily:'Playfair Display'}}>{fmtCurrency(totalPrice)}</span>
+              </div>
+            </div>
+            {obs&&<div style={{fontSize:13,color:'#666',background:'#111',border:'1px solid #1a1a1a',borderRadius:3,padding:'10px 14px',marginBottom:16}}><span style={{color:'#555'}}>Obs.: </span>{obs}</div>}
+          </div>
+        )}
+
+        {/* Botões de navegação */}
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:28,paddingTop:24,borderTop:'1px solid #1a1a1a'}}>
+          <button onClick={step>1?()=>setStep(s=>s-1):onBack} style={{background:'none',border:'1px solid #2a2a2a',color:'#888',padding:'11px 20px',cursor:'pointer',fontSize:13,borderRadius:2,fontFamily:'Outfit'}}>← Voltar</button>
+          {step<4
+            ?<button onClick={()=>setStep(s=>s+1)} disabled={!canNext()} style={{background:canNext()?'var(--gold)':'#1a1a1a',color:canNext()?'var(--black)':'#444',border:'none',padding:'12px 28px',fontWeight:700,fontSize:14,cursor:canNext()?'pointer':'not-allowed',borderRadius:2,fontFamily:'Outfit',letterSpacing:'0.05em',transition:'all 0.2s'}}>Continuar →</button>
+            :<button onClick={handleConfirm} disabled={submitting} style={{background:submitting?'#333':'var(--gold)',color:submitting?'#888':'var(--black)',border:'none',padding:'12px 28px',fontWeight:700,fontSize:14,cursor:submitting?'not-allowed':'pointer',borderRadius:2,fontFamily:'Outfit',letterSpacing:'0.05em'}}>
+              {submitting?'Aguarde...':'Confirmar Agendamento'}
+            </button>
+          }
+        </div>
+      </div>
+    );
+  }
+
+  // ── APP ──────────────────────────────────────────────────────────────
+  function App() {
+    const [mode, setMode]             = useState('landing'); // 'landing' | 'booking'
+    const [initialService, setInitialService] = useState(null);
+
+    const startBook = svcId => { setInitialService(svcId||null); setMode('booking'); window.scrollTo({top:0,behavior:'smooth'}); };
+
+    return (
+      <>
+        <Header/>
+        {mode==='landing'
+          ? <Landing onBook={()=>startBook(null)} onBookService={id=>startBook(id)}/>
+          : <BookingFlow initialService={initialService} onBack={()=>{ setMode('landing'); window.scrollTo({top:0,behavior:'smooth'}); }}/>
+        }
+        {/* WhatsApp flutuante */}
+        <a href="https://wa.me/5512981365015" target="_blank" rel="noopener noreferrer"
+          style={{position:'fixed',bottom:24,left:20,zIndex:200,background:'#25D366',color:'white',width:48,height:48,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',textDecoration:'none',boxShadow:'0 4px 16px rgba(37,211,102,0.4)',transition:'transform 0.2s'}}
+          onMouseEnter={e=>e.currentTarget.style.transform='scale(1.1)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </a>
+      </>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
