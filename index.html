@@ -9,6 +9,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap"
     rel="stylesheet" />
+  <link rel="icon" href="assets/logotipo.png" type="image/png">
 
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin="anonymous"></script>
@@ -229,10 +230,10 @@
     // ─── MOCK: SERVIÇOS ──────────────────────────────────────────────
 
     const MOCK_SERVICES = [
-      { id: "svc-001", category: "Corte", name: "Corte Masculino Premium", details: "Geometria do Corte personalizada para o formato do seu rosto. Corte clássico ou moderno, com acabamento de navalha.", unitPrice: "65.00", durationMinutes: 45, position: 1, isActive: true, imageUrl: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=600&h=400&fit=crop&q=80" },
-      { id: "svc-002", category: "Barba", name: "Barboterapia", details: "Modelagem completa com produtos premium: hidratação, desenho preciso e acabamento com toalha quente.", unitPrice: "55.00", durationMinutes: 40, position: 2, isActive: true, imageUrl: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&h=400&fit=crop&q=80" },
-      { id: "svc-003", category: "Penteados", name: "Penteados Modernos", details: "Finalização e styling profissional com pomada, wax ou gel. Do look casual ao social, seu estilo definido.", unitPrice: "45.00", durationMinutes: 30, position: 3, isActive: true, imageUrl: "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&h=400&fit=crop&q=80" },
-      { id: "svc-004", category: "Visagismo", name: "Visagismo", details: "Consultoria completa de estilo: analisamos o formato do rosto e projetamos o corte ideal para sua identidade.", unitPrice: "120.00", durationMinutes: 60, position: 4, isActive: true, imageUrl: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=400&fit=crop&q=80" },
+      { id: "svc-001", category: "Corte", name: "Corte Masculino Premium", details: "Geometria do Corte personalizada para o formato do seu rosto. Corte clássico ou moderno, com acabamento de navalha.", unitPrice: "65.00", durationMinutes: 45, position: 1, isActive: true, imageUrl: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&h=400&fit=crop&q=80" },
+      { id: "svc-002", category: "Barba", name: "Barboterapia", details: "Modelagem completa com produtos premium: hidratação, desenho preciso e acabamento com toalha quente.", unitPrice: "55.00", durationMinutes: 40, position: 2, isActive: true, imageUrl: "assets/barboterapia.jpg" },
+      { id: "svc-003", category: "Penteados", name: "Penteados Modernos", details: "Finalização e styling profissional com pomada, wax ou gel. Do look casual ao social, seu estilo definido.", unitPrice: "45.00", durationMinutes: 30, position: 3, isActive: true, imageUrl: "assets/penteados.jpg" },
+      { id: "svc-004", category: "Visagismo", name: "Visagismo", details: "Consultoria completa de estilo: analisamos o formato do rosto e projetamos o corte ideal para sua identidade.", unitPrice: "120.00", durationMinutes: 60, position: 4, isActive: true, imageUrl: "assets/visagismo.jpg" },
     ];
 
     // ─── MOCK: EQUIPE ────────────────────────────────────────────────
@@ -258,21 +259,21 @@
 
     const SHOP_PRODUCTS = [
       { id: "p-001", name: "Tônico Capilar F47", desc: "Estimula o crescimento, fortalece os fios e nutre o couro cabeludo. O mesmo produto usado na barbearia. 150ml", price: "89.90", badge: "Mais Vendido", img: "assets/tonico_capila.jpg" },
-      { id: "p-002", name: "Pomada de Fixação Forte", desc: "Acabamento mate com fixação extra forte o dia todo. Não resseca nem pesa. 100g", price: "49.90", badge: null, img: "https://images.unsplash.com/photo-1571019613575-2b85e68da6dd?w=400&h=500&fit=crop&q=80" },
-      { id: "p-003", name: "Spray Laque Profissional", desc: "Fijación extra forte para finalização de penteados elaborados. Secagem rápida. 200ml", price: "39.90", badge: null, img: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&h=500&fit=crop&q=80" },
-      { id: "p-004", name: "Tônico Antiqueda P47", desc: "Protocolo tricológico com ativos fortalecedores. Reduz queda e estimula novos fios. 120ml", price: "74.90", badge: "Novo", img: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=400&h=500&fit=crop&q=80" },
-      { id: "p-005", name: "Kit Pentes Profissional", desc: "3 pentes de madeira natural para estilo e desmalhamento. O mesmo kit usado pelos barbeiros da P47", price: "34.90", badge: null, img: "https://images.unsplash.com/photo-1559521783-1d1599583485?w=400&h=500&fit=crop&q=80" },
-      { id: "p-006", name: "Loção Pós-Barba F47", desc: "Hidratante calmante pós-barbear com aloe vera e vitamina E. Elimina ardência e irrita ção. 100ml", price: "54.90", badge: null, img: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=400&h=500&fit=crop&q=80" },
+      { id: "p-002", name: "Pomada de Fixação Forte", desc: "Acabamento mate com fixação extra forte o dia todo. Não resseca nem pesa. 100g", price: "49.90", badge: null, img: "assets/tonico_capila.jpg" },
+      { id: "p-003", name: "Spray Laque Profissional", desc: "Fijación extra forte para finalização de penteados elaborados. Secagem rápida. 200ml", price: "39.90", badge: null, img: "assets/tonico_capila.jpg" },
+      { id: "p-004", name: "Tônico Antiqueda P47", desc: "Protocolo tricológico com ativos fortalecedores. Reduz queda e estimula novos fios. 120ml", price: "74.90", badge: "Novo", img: "assets/tonico_capila.jpg" },
+      { id: "p-005", name: "Kit Pentes Profissional", desc: "3 pentes de madeira natural para estilo e desmalhamento. O mesmo kit usado pelos barbeiros da P47", price: "34.90", badge: null, img: "assets/tonico_capila.jpg" },
+      { id: "p-006", name: "Loção Pós-Barba F47", desc: "Hidratante calmante pós-barbear com aloe vera e vitamina E. Elimina ardência e irrita ção. 100ml", price: "54.90", badge: null, img: "assets/tonico_capila.jpg" },
     ];
 
     // ─── GALERIA ─────────────────────────────────────────────────────
 
     const GALLERY_ITEMS = [
       { label: 'Corte Masculino', img: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=900&h=600&fit=crop&q=80' },
-      { label: 'Barboterapia', img: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600&h=400&fit=crop&q=80' },
+      { label: 'Barboterapia', img: 'assets/barboterapia.jpg' },
       { label: 'Visagismo', img: 'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600&h=400&fit=crop&q=80' },
       { label: 'Coloração', img: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?w=600&h=400&fit=crop&q=80' },
-      { label: 'Ambiente P47', img: 'https://images.unsplash.com/photo-1521490533707-fc6e72e1bce4?w=900&h=400&fit=crop&q=80' },
+      { label: 'Ambiente P47', img: 'assets/ambiente.png' },
       { label: 'Resultado Final', img: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&h=400&fit=crop&q=80' },
     ];
 
@@ -1370,21 +1371,71 @@
     }
     function CallToAction({ onBook }) {
       return (
-        <section style={{ padding: '100px 40px', position: 'relative', overflow: 'hidden', background: 'var(--p47-blue)' }}>
-          <div style={{ position: 'absolute', inset: 0, opacity: 0.15 }}>
-            <img src="assets/cta.png" alt="CTA Background" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          </div>
-          <div style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto', textAlign: 'center' }}>
-            <div className="military-stripes" style={{ justifyContent: 'center', marginBottom: 24, transform: 'scale(1.5)' }}><div></div><div></div></div>
-            <h2 style={{ fontFamily: 'Playfair Display', fontSize: 'clamp(32px,4vw,56px)', fontWeight: 700, color: 'var(--white)', marginBottom: 24 }}>
-              Pronto para o Próximo <span style={{ color: 'var(--gold)' }}>Alinhamento?</span>
-            </h2>
-            <p style={{ color: '#8E9196', fontSize: 18, maxWidth: 600, margin: '0 auto 40px' }}>
-              Não deixe para depois. Garanta seu horário com a melhor guarnição de barbeiros da região.
-            </p>
-            <button onClick={onBook} className="btn-gold btn-gold-lg" style={{ padding: '18px 48px' }}>
-              Agendar Missão
-            </button>
+        <section style={{ padding: '80px 40px', background: 'var(--army-green)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto', position: 'relative' }}>
+            <div style={{
+              background: 'var(--p47-blue)',
+              borderRadius: 4,
+              padding: '100px 40px',
+              position: 'relative',
+              overflow: 'hidden',
+              border: '1px solid rgba(201,168,76,0.2)',
+              boxShadow: '0 40px 100px rgba(0,0,0,0.5)'
+            }}>
+              {/* Background Asset */}
+              <div style={{ position: 'absolute', inset: 0, opacity: 0.25 }}>
+                <img src="assets/cta.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+
+              {/* Overlay Gradient */}
+              <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(45deg, rgba(26,34,46,0.9) 0%, transparent 100%)' }} />
+
+              <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', maxWidth: 700, margin: '0 auto' }}>
+                <SectionLabel>Convocação Imediata</SectionLabel>
+                <h2 style={{
+                  fontFamily: 'Playfair Display',
+                  fontSize: 'clamp(36px,5vw,64px)',
+                  fontWeight: 700,
+                  color: 'var(--white)',
+                  lineHeight: 1.1,
+                  marginBottom: 24,
+                  textShadow: '0 10px 20px rgba(0,0,0,0.5)'
+                }}>
+                  Pronto para assumir o <span style={{ color: 'var(--gold)' }}>comando?</span>
+                </h2>
+                <p style={{ color: '#ccc', fontSize: 'clamp(16px,1.2vw,20px)', lineHeight: 1.6, marginBottom: 48, opacity: 0.9 }}>
+                  Não deixe sua imagem ao acaso. Reserve seu lugar na cadeira dos especialistas e prepare-se para a sua próxima missão.
+                </p>
+
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+                  <button onClick={onBook} className="btn-gold btn-gold-lg" style={{ padding: '22px 64px', fontSize: 16 }}>
+                    Agendar Minha Missão
+                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--gold)', fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    <div style={{ width: 40, height: 1, background: 'currentColor', opacity: 0.3 }} />
+                    Disponibilidade Imediata
+                    <div style={{ width: 40, height: 1, background: 'currentColor', opacity: 0.3 }} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Tactical Accents */}
+              <div className="military-stripes" style={{ position: 'absolute', top: 40, left: 40, opacity: 0.3 }}><div></div><div></div></div>
+              <div className="military-stripes" style={{ position: 'absolute', bottom: 40, right: 40, opacity: 0.3, transform: 'rotate(180deg)' }}><div></div><div></div></div>
+
+              {/* Rivets */}
+              {[
+                { top: 15, left: 15 }, { top: 15, right: 15 },
+                { bottom: 15, left: 15 }, { bottom: 15, right: 15 }
+              ].map((pos, i) => (
+                <div key={i} style={{
+                  position: 'absolute', ...pos,
+                  width: 8, height: 8, borderRadius: '50%',
+                  background: 'var(--gold)', opacity: 0.2,
+                  boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.5)'
+                }} />
+              ))}
+            </div>
           </div>
         </section>
       );
@@ -1403,10 +1454,26 @@
                 <h2 style={{ fontFamily: 'Playfair Display', fontSize: 'clamp(28px,3vw,42px)', fontWeight: 700, marginBottom: 32 }}>Como nos encontrar</h2>
                 <div style={{ display: 'grid', gap: 24 }}>
                   {[
-                    { icon: '📍', title: 'Endereço', info: 'R. Comendador Remo Cesaroni, 301\nVila Ema, São José dos Campos – SP\nCEP 12243-020' },
-                    { icon: '📱', title: 'WhatsApp', info: '(12) 98136-5015' },
-                    { icon: '🕐', title: 'Horário', info: 'Seg–Sex: 9h às 20h\nSábado: 9h às 18h' },
-                    { icon: '📸', title: 'Instagram', info: '@barbershopp47' },
+                    {
+                      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>,
+                      title: 'Endereço',
+                      info: 'R. Comendador Remo Cesaroni, 301\nVila Ema, São José dos Campos – SP\nCEP 12243-020'
+                    },
+                    {
+                      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>,
+                      title: 'WhatsApp',
+                      info: '(12) 98136-5015'
+                    },
+                    {
+                      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>,
+                      title: 'Horário',
+                      info: 'Seg–Sex: 9h às 20h\nSábado: 9h às 18h'
+                    },
+                    {
+                      icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" /></svg>,
+                      title: 'Instagram',
+                      info: '@barbershopp47'
+                    },
                   ].map(item => (
                     <div key={item.title} style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                       <div style={{ width: 44, height: 44, border: '1px solid #2a2a2a', borderRadius: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0, background: '#161616' }}>{item.icon}</div>
@@ -1421,14 +1488,16 @@
                   <a href="https://wa.me/5512981365015" style={{ display: 'inline-block', background: 'var(--gold)', color: 'var(--black)', textDecoration: 'none', padding: '14px 28px', fontWeight: 700, fontSize: 13, letterSpacing: '0.1em', textTransform: 'uppercase', borderRadius: 2 }}>Falar no WhatsApp</a>
                 </div>
               </div>
-              <div style={{ background: '#161616', border: '1px solid #2a2a2a', borderRadius: 4, aspectRatio: '4/3', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg,transparent,transparent 39px,#1e1e1e 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#1e1e1e 40px)', opacity: 0.5 }} />
-                <div style={{ position: 'relative', textAlign: 'center' }}>
-                  <div style={{ fontSize: 36, marginBottom: 8 }}>📍</div>
-                  <div style={{ fontSize: 14, color: '#888', marginBottom: 4 }}>Vila Ema, São José dos Campos</div>
-                  <div style={{ fontSize: 12, color: '#555' }}>R. Comendador Remo Cesaroni, 301</div>
-                  <a href="https://maps.google.com/?q=Barbearia+P47+São+José+dos+Campos" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 16, color: 'var(--gold)', fontSize: 12, textDecoration: 'none', border: '1px solid var(--gold-dark)', padding: '8px 16px', borderRadius: 2, fontWeight: 500 }}>Ver no Google Maps →</a>
-                </div>
+              <div style={{ background: '#161616', border: '1px solid #2a2a2a', borderRadius: 4, aspectRatio: '4/3', position: 'relative', overflow: 'hidden' }}>
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3667.0158418653027!2d-45.903685824680636!3d-23.20609327904563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cc4a7772dab253%3A0x5c50ee87825188ee!2sBarbearia%20P47!5e0!3m2!1spt-BR!2sbr!4v1776749616648!5m2!1spt-BR!2sbr"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, filter: 'grayscale(1) contrast(1.2) invert(0.9) hue-rotate(180deg)' }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
               </div>
             </div>
           </div>
@@ -1517,11 +1586,7 @@
 
       return (
         <>
-          {usingMock && !dataLoading && (
-            <div style={{ position: 'fixed', bottom: 80, right: 24, zIndex: 200, background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 3, padding: '8px 14px', fontSize: 11, color: '#666', letterSpacing: '0.05em' }}>
-              ✦ Modo demonstração
-            </div>
-          )}
+
           <Nav onBook={handleBook} onConfig={() => setConfigOpen(true)} />
           <Hero onBook={handleBook} />
           <About />
