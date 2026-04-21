@@ -157,7 +157,7 @@
       transform: scale(1.06);
     }
 
-    /* ─── HERO RESPONSIVIDADE ───────────────────────────────────────── */
+    /* ─── HERO GRID ─────────────────────────────────────────────────── */
     .hero-content-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -165,6 +165,18 @@
       align-items: center;
     }
 
+    /* ─── LAYOUT CLASSES ────────────────────────────────────────────── */
+    .nav-desktop-links { display: flex; gap: 28px; align-items: center; }
+    .hamburger-btn { display: none !important; }
+    .hero-stats-row { display: flex; gap: 40px; margin-top: 56px; padding-top: 40px; border-top: 1px solid #1e1e1e; flex-wrap: wrap; }
+    .about-section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .svc-grid-main { display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 24px; }
+    .gallery-grid-main { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 220px); gap: 12px; }
+    .location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .footer-grid-main { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
+    .footer-bottom-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #444; margin-top: 24px; }
+
+    /* ─── TABLET (≤992px) ────────────────────────────────────────────── */
     @media (max-width: 992px) {
       .hero-content-grid {
         grid-template-columns: 1fr !important;
@@ -187,21 +199,61 @@
       .hero-content-grid img {
         max-width: 280px !important;
       }
+
+      .about-section-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
+      .svc-grid-main { grid-template-columns: 1fr !important; }
+      .location-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+      .footer-grid-main { grid-template-columns: 1fr 1fr !important; gap: 40px !important; }
     }
 
+    /* ─── MOBILE (≤768px) ────────────────────────────────────────────── */
     @media (max-width: 768px) {
-      nav {
-        padding: 0 20px !important;
+      nav { padding: 0 16px !important; }
+      .nav-desktop-links { display: none !important; }
+      .hamburger-btn { display: flex !important; }
+      .nav-book-btn-desktop { display: none !important; }
+
+      section { padding-left: 16px !important; padding-right: 16px !important; }
+
+      .hero-content-grid {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
       }
 
-      nav>div:nth-child(2) {
-        display: none !important;
+      .hero-stats-row {
+        gap: 20px !important;
+        margin-top: 32px !important;
+        padding-top: 24px !important;
       }
 
-      section {
-        padding-left: 20px !important;
-        padding-right: 20px !important;
+      .about-section-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+      .about-photo-col { padding-right: 36px !important; padding-bottom: 36px !important; overflow: hidden !important; }
+
+      .svc-grid-main { grid-template-columns: 1fr !important; }
+
+      .gallery-grid-main {
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-template-rows: repeat(3, 180px) !important;
       }
+
+      .location-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+
+      .footer-grid-main { grid-template-columns: 1fr !important; gap: 28px !important; }
+      .footer-bottom-row { flex-direction: column !important; gap: 8px !important; text-align: center !important; }
+
+      .cta-inner-box { padding: 60px 24px !important; }
+      .shop-featured-cta-row { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; }
+
+      /* Modal mobile */
+      .booking-modal-overlay { padding: 0 !important; align-items: flex-end !important; }
+      .booking-modal-inner {
+        border-radius: 12px 12px 0 0 !important;
+        max-height: 92dvh !important;
+        max-height: 92vh !important;
+      }
+      .booking-modal-header { padding: 20px 16px 16px !important; }
+      .booking-modal-body { padding: 16px !important; }
+      .booking-modal-footer { padding: 12px 16px 20px !important; }
     }
   </style>
 </head>
@@ -584,11 +636,11 @@
       const stepLabels = ['Serviços', 'Agendamento', 'Seus dados', 'Confirmar'];
 
       return (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.92)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-          <div style={{ background: 'var(--dark)', border: '1px solid #2a2a2a', borderRadius: 4, width: '100%', maxWidth: 740, maxHeight: '92vh', display: 'flex', flexDirection: 'column', position: 'relative', animation: 'fadeIn 0.2s ease' }}>
+        <div className="booking-modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.92)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <div className="booking-modal-inner" style={{ background: 'var(--dark)', border: '1px solid #2a2a2a', borderRadius: 4, width: '100%', maxWidth: 740, maxHeight: '92vh', display: 'flex', flexDirection: 'column', position: 'relative', animation: 'fadeIn 0.2s ease' }}>
 
             {/* Header */}
-            <div style={{ padding: '24px 32px 20px', borderBottom: '1px solid #1e1e1e' }}>
+            <div className="booking-modal-header" style={{ padding: '24px 32px 20px', borderBottom: '1px solid #1e1e1e' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <div style={{ color: 'var(--gold)', fontSize: 11, letterSpacing: '0.2em', fontWeight: 600, textTransform: 'uppercase', marginBottom: 4 }}>Barbearia P47</div>
@@ -615,7 +667,7 @@
             </div>
 
             {/* Body */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
+            <div className="booking-modal-body" style={{ flex: 1, overflowY: 'auto', padding: '24px 32px' }}>
 
               {booked ? (
                 <div style={{ textAlign: 'center', padding: '32px 0' }}>
@@ -817,7 +869,7 @@
 
             {/* Footer */}
             {!booked && (
-              <div style={{ padding: '16px 32px 24px', borderTop: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="booking-modal-footer" style={{ padding: '16px 32px 24px', borderTop: '1px solid #1a1a1a', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 {step > 1
                   ? <button onClick={() => setStep(s => s - 1)} style={{ background: 'none', border: '1px solid #2a2a2a', color: '#888', padding: '10px 20px', cursor: 'pointer', fontSize: 13, borderRadius: 2, fontFamily: 'Outfit' }}>← Voltar</button>
                   : <div />
@@ -843,6 +895,7 @@
 
     function Nav({ onBook, onConfig }) {
       const [scrolled, setScrolled] = useState(false);
+      const [menuOpen, setMenuOpen] = useState(false);
       useEffect(() => {
         const fn = () => setScrolled(window.scrollY > 60);
         window.addEventListener('scroll', fn);
@@ -850,32 +903,54 @@
       }, []);
       const links = [['Sobre', '#sobre'], ['Serviços', '#servicos'], ['Equipe', '#equipe'], ['Galeria', '#galeria'], ['Loja', '#loja'], ['Localização', '#localiza']];
       return (
-        <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: scrolled ? 'rgba(10,11,13,0.97)' : 'transparent', borderBottom: scrolled ? '1px solid #1e1e1e' : '1px solid transparent', padding: '0 40px', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'all 0.4s', backdropFilter: scrolled ? 'blur(12px)' : 'none' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <img src="assets/logotipo.png" alt="P47 Logo" style={{ height: 40, objectFit: 'contain' }} />
-
-          </div>
-          <div style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
-            {links.map(([l, h]) => (
-              <a key={l} href={h} style={{ color: '#aaa', textDecoration: 'none', fontSize: 13, fontWeight: 400, letterSpacing: '0.05em', transition: 'color 0.2s' }}
-                onMouseEnter={e => e.target.style.color = 'var(--gold)'} onMouseLeave={e => e.target.style.color = '#aaa'}>{l}</a>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            <button onClick={onConfig} title="Configurar API" style={{ background: 'none', border: '1px solid #2a2a2a', color: '#666', width: 36, height: 36, borderRadius: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold-dark)'; e.currentTarget.style.color = 'var(--gold)'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.color = '#666'; }}>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </button>
-            <button onClick={onBook} style={{ background: 'var(--gold)', color: 'var(--black)', border: 'none', padding: '10px 22px', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', cursor: 'pointer', borderRadius: 2, fontFamily: 'Outfit', transition: 'background 0.2s' }}
-              onMouseEnter={e => e.target.style.background = 'var(--gold-light)'} onMouseLeave={e => e.target.style.background = 'var(--gold)'}>
-              AGENDAR
-            </button>
-          </div>
-        </nav>
+        <>
+          <nav style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, background: scrolled || menuOpen ? 'rgba(10,11,13,0.97)' : 'transparent', borderBottom: scrolled || menuOpen ? '1px solid #1e1e1e' : '1px solid transparent', padding: '0 40px', height: 72, display: 'flex', alignItems: 'center', justifyContent: 'space-between', transition: 'all 0.4s', backdropFilter: scrolled || menuOpen ? 'blur(12px)' : 'none' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <img src="assets/logotipo.png" alt="P47 Logo" style={{ height: 40, objectFit: 'contain' }} />
+            </div>
+            <div className="nav-desktop-links">
+              {links.map(([l, h]) => (
+                <a key={l} href={h} style={{ color: '#aaa', textDecoration: 'none', fontSize: 13, fontWeight: 400, letterSpacing: '0.05em', transition: 'color 0.2s' }}
+                  onMouseEnter={e => e.target.style.color = 'var(--gold)'} onMouseLeave={e => e.target.style.color = '#aaa'}>{l}</a>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              <button onClick={onConfig} title="Configurar API" style={{ background: 'none', border: '1px solid #2a2a2a', color: '#666', width: 36, height: 36, borderRadius: 2, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s' }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold-dark)'; e.currentTarget.style.color = 'var(--gold)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.color = '#666'; }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+              <button className="hamburger-btn" onClick={() => setMenuOpen(o => !o)} style={{ background: 'none', border: '1px solid #2a2a2a', color: '#888', width: 36, height: 36, borderRadius: 2, cursor: 'pointer', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s', flexShrink: 0 }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold-dark)'; e.currentTarget.style.color = 'var(--gold)'; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = '#2a2a2a'; e.currentTarget.style.color = '#888'; }}>
+                {menuOpen
+                  ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                  : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" /></svg>
+                }
+              </button>
+              <button className="nav-book-btn-desktop" onClick={onBook} style={{ background: 'var(--gold)', color: 'var(--black)', border: 'none', padding: '10px 22px', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', cursor: 'pointer', borderRadius: 2, fontFamily: 'Outfit', transition: 'background 0.2s' }}
+                onMouseEnter={e => e.target.style.background = 'var(--gold-light)'} onMouseLeave={e => e.target.style.background = 'var(--gold)'}>
+                AGENDAR
+              </button>
+            </div>
+          </nav>
+          {menuOpen && (
+            <div style={{ position: 'fixed', top: 72, left: 0, right: 0, background: 'rgba(10,11,13,0.98)', backdropFilter: 'blur(16px)', borderBottom: '1px solid #1e1e1e', zIndex: 99, paddingBottom: 20, animation: 'fadeIn 0.2s ease' }}>
+              {links.map(([l, h]) => (
+                <a key={l} href={h} onClick={() => setMenuOpen(false)} style={{ display: 'block', color: '#aaa', textDecoration: 'none', fontSize: 15, padding: '15px 20px', borderBottom: '1px solid #1a1a1a', letterSpacing: '0.04em', transition: 'color 0.2s' }}
+                  onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'} onMouseLeave={e => e.currentTarget.style.color = '#aaa'}>{l}</a>
+              ))}
+              <div style={{ padding: '16px 20px 0' }}>
+                <button onClick={() => { setMenuOpen(false); onBook(); }} style={{ width: '100%', background: 'var(--gold)', color: 'var(--black)', border: 'none', padding: '15px', fontWeight: 700, fontSize: 14, letterSpacing: '0.1em', textTransform: 'uppercase', cursor: 'pointer', borderRadius: 2, fontFamily: 'Outfit' }}>
+                  AGENDAR AGORA →
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       );
     }
 
@@ -944,7 +1019,7 @@
                   </a>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: 40, marginTop: 56, paddingTop: 40, borderTop: '1px solid #1e1e1e' }}>
+              <div className="hero-stats-row">
                 {[['20+', 'Anos de experiência'], ['5', 'Profissionais'], ['4', 'Serviços']].map(([n, l]) => (
                   <div key={n}>
                     <div style={{ fontFamily: 'Playfair Display', fontSize: 32, fontWeight: 700, color: 'var(--gold)', lineHeight: 1 }}>{n}</div>
@@ -970,10 +1045,10 @@
     function About() {
       return (
         <section id="sobre" style={{ padding: '100px 40px', maxWidth: 1200, margin: '0 auto', overflow: 'visible' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+          <div className="about-section-grid">
 
             {/* ── Coluna da foto: composição editorial ── */}
-            <div style={{ position: 'relative', minHeight: 520 }}>
+            <div className="about-photo-col" style={{ position: 'relative', minHeight: 520 }}>
 
               {/* Painel de fundo deslocado — cria profundidade */}
               <div style={{
@@ -1119,7 +1194,7 @@
             </div>
 
             {/* Grid de serviços — 2 colunas desktop */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(480px,1fr))', gap: 24 }}>
+            <div className="svc-grid-main">
               {active.map(s => (
                 <div key={s.id} className="svc-card" style={{ background: 'var(--dark2)', border: '1px solid #2a2a2a', borderRadius: 4, overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'border-color 0.3s, transform 0.2s' }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--gold-dark)'; e.currentTarget.style.transform = 'translateY(-3px)'; }}
@@ -1230,7 +1305,7 @@
               <SectionLabel>Galeria</SectionLabel>
               <h2 style={{ fontFamily: 'Playfair Display', fontSize: 'clamp(32px,3.5vw,48px)', fontWeight: 700 }}>Nosso Trabalho</h2>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gridTemplateRows: 'repeat(2,220px)', gap: 12 }}>
+            <div className="gallery-grid-main">
               {GALLERY_ITEMS.map((item, i) => (
                 <div key={i} className="gallery-item" style={{ background: 'var(--dark2)', border: '1px solid #2a2a2a', borderRadius: 3, display: 'flex', alignItems: 'flex-end', padding: 16, position: 'relative', overflow: 'hidden' }}>
                   <img className="gallery-img" src={item.img} alt={item.label} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }} />
@@ -1274,7 +1349,7 @@
                 <p style={{ color: '#888', fontSize: 14, lineHeight: 1.8, marginBottom: 20, maxWidth: 480 }}>
                   O produto símbolo da Barbearia P47. Estimula o crescimento capilar, fortalece os fios da raiz às pontas e nutre o couro cabeludo com ativos de alta eficácia. 150ml.
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                <div className="shop-featured-cta-row" style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
                   <div style={{ fontFamily: 'Playfair Display', fontSize: 32, fontWeight: 700, color: 'var(--gold)' }}>R$ 89,90</div>
                   <a href="https://wa.me/5512981365015?text=Quero%20comprar%20o%20T%C3%B4nico%20Capilar%20F47" target="_blank" rel="noopener noreferrer"
                     style={{ background: 'var(--gold)', color: 'var(--black)', padding: '14px 32px', fontSize: 13, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none', borderRadius: 2, fontFamily: 'Outfit', transition: 'all 0.2s', display: 'inline-block' }}
@@ -1381,7 +1456,7 @@
               overflow: 'hidden',
               border: '1px solid rgba(201,168,76,0.2)',
               boxShadow: '0 40px 100px rgba(0,0,0,0.5)'
-            }}>
+            }} className="cta-inner-box">
               {/* Background Asset */}
               <div style={{ position: 'absolute', inset: 0, opacity: 0.25 }}>
                 <img src="assets/cta.png" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -1408,7 +1483,7 @@
                 </p>
 
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
-                  <button onClick={onBook} className="btn-gold btn-gold-lg" style={{ padding: '22px 64px', fontSize: 16 }}>
+                  <button onClick={onBook} className="btn-gold btn-gold-lg" style={{ padding: '22px 64px', fontSize: 16, width: '100%', maxWidth: 400 }}>
                     Agendar Minha Missão
                   </button>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'var(--gold)', fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
@@ -1448,7 +1523,7 @@
         <section id="localiza" style={{ background: 'var(--dark)', padding: '100px 40px' }}>
           <GoldLine />
           <div style={{ maxWidth: 1200, margin: '60px auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 80, alignItems: 'center' }}>
+            <div className="location-grid">
               <div>
                 <SectionLabel>Localização Estratégica</SectionLabel>
                 <h2 style={{ fontFamily: 'Playfair Display', fontSize: 'clamp(28px,3vw,42px)', fontWeight: 700, marginBottom: 32 }}>Como nos encontrar</h2>
@@ -1512,7 +1587,7 @@
       return (
         <footer style={{ background: 'var(--black)', padding: '60px 40px 30px', borderTop: '1px solid #1a1a1a' }}>
           <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 60, marginBottom: 60 }}>
+            <div className="footer-grid-main">
               <div>
                 <div style={{ marginBottom: 12 }}>
                   <img src="assets/logotipo.png" alt="P47 Logo" style={{ height: 80, objectFit: 'contain' }} />
@@ -1542,7 +1617,7 @@
               </div>
             </div>
             <GoldLine />
-            <div style={{ marginTop: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 12, color: '#444' }}>
+            <div className="footer-bottom-row">
               <span>© 2025 Barbearia P47 · São José dos Campos</span>
               <span>Todos os direitos reservados</span>
             </div>
