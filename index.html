@@ -166,24 +166,80 @@
     }
 
     /* ─── LAYOUT CLASSES ────────────────────────────────────────────── */
-    .nav-desktop-links { display: flex; gap: 28px; align-items: center; }
-    .hamburger-btn { display: none !important; }
-    .hero-stats-row { display: flex; gap: 40px; margin-top: 56px; padding-top: 40px; border-top: 1px solid #1e1e1e; flex-wrap: wrap; }
-    .about-section-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-    .svc-grid-main { display: grid; grid-template-columns: repeat(auto-fill, minmax(480px, 1fr)); gap: 24px; }
-    .gallery-grid-main { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 220px); gap: 12px; }
-    .location-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
-    .footer-grid-main { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 60px; margin-bottom: 60px; }
-    .footer-bottom-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #444; margin-top: 24px; }
+    .nav-desktop-links {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
 
-    /* ─── TABLET (≤992px) ────────────────────────────────────────────── */
-    @media (max-width: 992px) {
+    .hamburger-btn {
+      display: none !important;
+    }
+
+    .hero-stats-row {
+      display: flex;
+      gap: 40px;
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid #1e1e1e;
+      flex-wrap: wrap;
+    }
+
+    .about-section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .svc-grid-main {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+      gap: 24px;
+    }
+
+    .gallery-grid-main {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 220px);
+      gap: 12px;
+    }
+
+    .location-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .footer-grid-main {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+
+    .footer-bottom-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #444;
+      margin-top: 24px;
+    }
+
+    /* ─── TABLET (≤993px) ────────────────────────────────────────────── */
+    @media (max-width: 993px) {
       .hero-content-grid {
         grid-template-columns: 1fr !important;
         gap: 40px !important;
         text-align: center;
         padding-top: 140px !important;
         padding-bottom: 60px !important;
+      }
+
+      .hero-logo-img {
+        display: none !important;
       }
 
       .hero-content-grid>div {
@@ -200,20 +256,63 @@
         max-width: 280px !important;
       }
 
-      .about-section-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
-      .svc-grid-main { grid-template-columns: 1fr !important; }
-      .location-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-      .footer-grid-main { grid-template-columns: 1fr 1fr !important; gap: 40px !important; }
+      .about-section-grid {
+        grid-template-columns: 1fr !important;
+        gap: 48px !important;
+      }
+
+      .about-photo-col {
+        min-height: 340px !important;
+        overflow: hidden !important;
+      }
+
+      .about-badge-name {
+        right: 16px !important;
+        bottom: 16px !important;
+      }
+
+      .about-badge-years {
+        right: 16px !important;
+        top: 16px !important;
+      }
+
+      .svc-grid-main {
+        grid-template-columns: 1fr !important;
+      }
+
+      .location-grid {
+        grid-template-columns: 1fr !important;
+        gap: 40px !important;
+      }
+
+      .footer-grid-main {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 40px !important;
+      }
     }
 
     /* ─── MOBILE (≤768px) ────────────────────────────────────────────── */
     @media (max-width: 768px) {
-      nav { padding: 0 16px !important; }
-      .nav-desktop-links { display: none !important; }
-      .hamburger-btn { display: flex !important; }
-      .nav-book-btn-desktop { display: none !important; }
+      nav {
+        padding: 0 16px !important;
+      }
 
-      section { padding-left: 16px !important; padding-right: 16px !important; }
+      .nav-desktop-links {
+        display: none !important;
+      }
+
+      .hamburger-btn {
+        display: flex !important;
+      }
+
+      .nav-book-btn-desktop {
+        display: none !important;
+      }
+
+      section {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+      }
 
       .hero-content-grid {
         padding-left: 16px !important;
@@ -226,34 +325,91 @@
         padding-top: 24px !important;
       }
 
-      .about-section-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-      .about-photo-col { padding-right: 36px !important; padding-bottom: 36px !important; overflow: hidden !important; }
+      .about-section-grid {
+        grid-template-columns: 1fr !important;
+        gap: 40px !important;
+      }
 
-      .svc-grid-main { grid-template-columns: 1fr !important; }
+      .about-photo-col {
+        min-height: 240px !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+      }
+
+      .about-badge-name {
+        right: 12px !important;
+        bottom: 12px !important;
+        padding: 10px 14px !important;
+      }
+
+      .about-badge-years {
+        right: 12px !important;
+        top: 12px !important;
+        padding: 10px 14px !important;
+      }
+
+      .svc-grid-main {
+        grid-template-columns: 1fr !important;
+      }
 
       .gallery-grid-main {
         grid-template-columns: repeat(2, 1fr) !important;
         grid-template-rows: repeat(3, 180px) !important;
       }
 
-      .location-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+      .location-grid {
+        grid-template-columns: 1fr !important;
+        gap: 32px !important;
+      }
 
-      .footer-grid-main { grid-template-columns: 1fr !important; gap: 28px !important; }
-      .footer-bottom-row { flex-direction: column !important; gap: 8px !important; text-align: center !important; }
+      .footer-grid-main {
+        grid-template-columns: 1fr !important;
+        gap: 28px !important;
+      }
 
-      .cta-inner-box { padding: 60px 24px !important; }
-      .shop-featured-cta-row { flex-direction: column !important; align-items: flex-start !important; gap: 16px !important; }
+      .footer-bottom-row {
+        flex-direction: column !important;
+        gap: 8px !important;
+        text-align: center !important;
+      }
+
+      .hero-logo-img {
+        display: none !important;
+      }
+
+      .cta-inner-box {
+        padding: 60px 24px !important;
+      }
+
+      .shop-featured-cta-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 16px !important;
+      }
 
       /* Modal mobile */
-      .booking-modal-overlay { padding: 0 !important; align-items: flex-end !important; }
+      .booking-modal-overlay {
+        padding: 0 !important;
+        align-items: flex-end !important;
+      }
+
       .booking-modal-inner {
         border-radius: 12px 12px 0 0 !important;
         max-height: 92dvh !important;
         max-height: 92vh !important;
       }
-      .booking-modal-header { padding: 20px 16px 16px !important; }
-      .booking-modal-body { padding: 16px !important; }
-      .booking-modal-footer { padding: 12px 16px 20px !important; }
+
+      .booking-modal-header {
+        padding: 20px 16px 16px !important;
+      }
+
+      .booking-modal-body {
+        padding: 16px !important;
+      }
+
+      .booking-modal-footer {
+        padding: 12px 16px 20px !important;
+      }
     }
   </style>
 </head>
@@ -995,7 +1151,7 @@
                 Sua aparência,<br /><em style={{ fontStyle: 'italic', color: 'var(--gold)' }}>nossa missão.</em>
               </h1>
               <p style={{ color: '#888', fontSize: 17, lineHeight: 1.8, marginBottom: 16, maxWidth: 440 }}>
-                Corte, barba, penteado ou visagismo — tudo com a precisão do P-47 Thunderbolt.
+                Corte, barba, penteado ou visagismo — tudo com a precisão da P-47.
               </p>
               <p style={{ color: '#666', fontSize: 14, lineHeight: 1.6, marginBottom: 40, maxWidth: 400 }}>
                 Agende online em minutos. Escolha o serviço, o profissional e o horário ideal para você.
@@ -1028,7 +1184,7 @@
                 ))}
               </div>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+            <div className="hero-logo-img" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
               <img src="assets/logo.png" alt="P47 Logo" style={{ width: '100%', maxWidth: 480, height: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 0 30px rgba(201,168,76,0.15))' }} />
             </div>
           </div>
@@ -1088,7 +1244,7 @@
               </div>
 
               {/* Badge flutuante — nome/cargo (inferior direito) */}
-              <div style={{
+              <div className="about-badge-name" style={{
                 position: 'absolute', bottom: 20, right: -28, zIndex: 4,
                 background: 'var(--gold)', color: 'var(--black)',
                 padding: '13px 20px', borderRadius: 2,
@@ -1100,7 +1256,7 @@
               </div>
 
               {/* Badge flutuante — anos de experiência (superior direito) */}
-              <div style={{
+              <div className="about-badge-years" style={{
                 position: 'absolute', top: 44, right: -36, zIndex: 4,
                 background: 'var(--dark3)', border: '1px solid var(--gold-dark)',
                 padding: '14px 18px', borderRadius: 2, textAlign: 'center',
