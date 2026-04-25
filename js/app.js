@@ -282,7 +282,8 @@ function renderSiteTeam() {
 // ─── BOOKING MODAL — CONTROLE ─────────────────────────────────────────────────
 
 function openBookingModal(serviceId) {
-  state.weekStart = getWeekStart(new Date());
+  const _now = new Date();
+  state.weekStart = new Date(_now.getFullYear(), _now.getMonth(), 1); // primeiro dia do mês atual
   state.sessionId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   clearTempSelections();
   if (serviceId) state.tempServicos = [serviceId];
@@ -643,35 +644,51 @@ function renderStep3() {
 
 // ─── STEP 4: DATA + HORA ─────────────────────────────────────────────────────
 
+const MONTH_NAMES = [
+  'Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+  'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro',
+];
+
 function renderStep4() {
   const container = document.getElementById('step-4-content');
   if (!container) return;
 
+  const year  = state.weekStart.getFullYear();
+  const month = state.weekStart.getMonth();
+
   const today    = new Date(); today.setHours(0, 0, 0, 0);
-  const weekDays = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(state.weekStart);
-    d.setDate(d.getDate() + i);
-    return d;
-  });
+  const firstDay = new Date(year, month, 1);
+  const lastDay  = new Date(year, month + 1, 0);
+  const startDow = firstDay.getDay(); // 0 = Dom
+  const totalDays = lastDay.getDate();
+
+  // Células do grid: espaços vazios + dias do mês
+  let cells = '';
+  for (let i = 0; i < startDow; i++) {
+    cells += '<div class="cal-cell cal-empty"></div>';
+  }
+  for (let d = 1; d <= totalDays; d++) {
+    const date    = new Date(year, month, d);
+    const dateStr = fmtDate(date);
+    const isPast  = date < today;
+    const isToday = dateStr === fmtDate(today);
+    const isSel   = state.tempData === dateStr;
+    cells += `<button class="cal-cell cal-day${isPast ? ' cal-past' : ''}${isToday ? ' cal-today' : ''}${isSel ? ' cal-selected' : ''}"
+      data-date="${dateStr}" ${isPast ? 'disabled' : ''}>${d}</button>`;
+  }
 
   container.innerHTML = `
     <p class="modal-section-label">Escolha o dia</p>
-    <div class="week-nav-row">
-      <button class="week-nav-btn" id="prev-week-btn">←</button>
-      <div class="week-days-grid" id="week-days-grid">
-        ${weekDays.map(d => {
-    const isPast = d < today;
-    const isSel  = state.tempData === fmtDate(d);
-    return `
-            <button class="day-btn${isSel ? ' selected' : ''}${isPast ? ' past' : ''}"
-                    data-date="${fmtDate(d)}"
-                    ${isPast ? 'disabled' : ''}>
-              <div class="day-short">${DAY_SHORT[d.getDay()]}</div>
-              <div class="day-num">${d.getDate()}</div>
-            </button>`;
-  }).join('')}
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <button class="cal-nav-btn" id="prev-month-btn">←</button>
+        <span class="cal-month-label">${MONTH_NAMES[month]} ${year}</span>
+        <button class="cal-nav-btn" id="next-month-btn">→</button>
       </div>
-      <button class="week-nav-btn" id="next-week-btn">→</button>
+      <div class="cal-weekdays">
+        ${DAY_SHORT.map(d => `<div class="cal-weekday">${d}</div>`).join('')}
+      </div>
+      <div class="cal-grid">${cells}</div>
     </div>
 
     <div id="slots-section" style="display:${state.tempData ? 'block' : 'none'}">
@@ -686,11 +703,11 @@ function renderStep4() {
       </div>
     </div>`;
 
-  container.querySelectorAll('.day-btn:not([disabled])').forEach(btn => {
+  container.querySelectorAll('.cal-day:not([disabled])').forEach(btn => {
     btn.addEventListener('click', () => handleDateSelect(btn.dataset.date));
   });
-  document.getElementById('prev-week-btn').addEventListener('click', () => navWeek(-1));
-  document.getElementById('next-week-btn').addEventListener('click', () => navWeek(1));
+  document.getElementById('prev-month-btn').addEventListener('click', () => navMonth(-1));
+  document.getElementById('next-month-btn').addEventListener('click', () => navMonth(1));
   bindSlotButtons();
 }
 
@@ -766,14 +783,13 @@ async function handleDateSelect(dateStr) {
   updateModalFooter();
 }
 
-function navWeek(dir) {
-  const ns    = new Date(state.weekStart);
-  ns.setDate(ns.getDate() + dir * 7);
-  const today = getWeekStart(new Date());
-  if (ns >= today) {
+function navMonth(dir) {
+  const ns = new Date(state.weekStart);
+  ns.setMonth(ns.getMonth() + dir);
+  const today = new Date();
+  const minMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  if (ns >= minMonth) {
     state.weekStart = ns;
-    state.tempData  = null;
-    state.tempHora  = null;
     renderStep4();
   }
 }
