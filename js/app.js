@@ -31,10 +31,10 @@ const state = {
   carrinho: [],
 
   // Dados do cliente
-  clienteNome:      '',
-  clienteTelefone:  '',
-  clienteEmail:     '',
-  clienteObs:       '',
+  clienteNome: '',
+  clienteTelefone: '',
+  clienteEmail: '',
+  clienteObs: '',
 
   // Gerado a cada abertura do modal — garante email sintético único por sessão
   // Necessário porque a API usa prisma.customer.create() sem upsert
@@ -102,8 +102,8 @@ async function apiCall(endpoint, options = {}) {
     ...options,
     headers: {
       'Content-Type': 'application/json',
-      'X-Api-Key': API_KEY,
-      'X-Api-Secret': API_SECRET,
+      'X-API-Key': API_KEY,
+      'X-API-Secret': API_SECRET,
       ...(options.headers || {}),
     },
   });
@@ -266,7 +266,7 @@ function renderSiteTeam() {
 // ─── BOOKING MODAL — CONTROLE ─────────────────────────────────────────────────
 
 function openBookingModal() {
-  state.step      = 1;
+  state.step = 1;
   state.weekStart = getWeekStart(new Date());
   // Novo sessionId a cada abertura do modal — garante email único por sessão
   state.sessionId = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
@@ -294,10 +294,10 @@ function clearTempSelections() {
 function resetFullBooking() {
   clearTempSelections();
   state.carrinho = [];
-  state.clienteNome     = '';
+  state.clienteNome = '';
   state.clienteTelefone = '';
-  state.clienteEmail    = '';
-  state.clienteObs      = '';
+  state.clienteEmail = '';
+  state.clienteObs = '';
 }
 
 // ─── STEP NAVIGATION ─────────────────────────────────────────────────────────
@@ -822,18 +822,18 @@ function handleDecisionNao() {
 // ─── STEP 6: DADOS DO CLIENTE ────────────────────────────────────────────────
 
 function renderStep6() {
-  const nomeInput  = document.getElementById('cliente-nome');
-  const foneInput  = document.getElementById('cliente-telefone');
+  const nomeInput = document.getElementById('cliente-nome');
+  const foneInput = document.getElementById('cliente-telefone');
   const emailInput = document.getElementById('cliente-email');
   if (!nomeInput || !foneInput) return;
 
-  nomeInput.value  = state.clienteNome;
-  foneInput.value  = state.clienteTelefone;
+  nomeInput.value = state.clienteNome;
+  foneInput.value = state.clienteTelefone;
   if (emailInput) emailInput.value = state.clienteEmail;
 
   // Remover listeners antigos clonando os inputs
-  const nome2  = nomeInput.cloneNode(true);
-  const fone2  = foneInput.cloneNode(true);
+  const nome2 = nomeInput.cloneNode(true);
+  const fone2 = foneInput.cloneNode(true);
   nomeInput.replaceWith(nome2);
   foneInput.replaceWith(fone2);
 
@@ -939,7 +939,7 @@ async function handleConfirmar() {
     const phone = state.clienteTelefone.replace(/\D/g, '') || undefined;
 
     const emailRaw = state.clienteEmail.trim();
-    const obs      = state.clienteObs.trim() || undefined;
+    const obs = state.clienteObs.trim() || undefined;
 
     for (const item of getAllBookingItems()) {
       // Email real do cliente OU sintético único por chamada.
@@ -947,18 +947,18 @@ async function handleConfirmar() {
       // (sem upsert) com unique constraint em (tenantId, email).
       // Cada chamada gera um sufixo diferente para não colidir.
       const emailSuffix = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-      const email = emailRaw || `bk.${emailSuffix}@p47booking.local`;
+      const email = emailRaw || `bk.${emailSuffix}@agendamento.com.br`;
 
       const payload = {
-        employeeId:    item.funcionarioId,
-        date:          item.data,
-        time:          item.hora,
-        serviceIds:    item.servicos,
-        customerName:  state.clienteNome.trim(),
+        employeeId: item.funcionarioId,
+        date: item.data,
+        time: item.hora,
+        serviceIds: item.servicos,
+        customerName: state.clienteNome.trim(),
         customerEmail: email,
         customerPhone: phone,
-        observation:   obs,
-        createOrder:   false,
+        observation: obs,
+        createOrder: false,
       };
       console.log('[P47] POST /external/v1/booking', payload);
       const result = await apiCall('/external/v1/booking', {
@@ -1107,28 +1107,28 @@ function initNav() {
 function initHeroVideo() {
   // Injeta o script da API do YouTube
   const tag = document.createElement('script');
-  tag.src   = 'https://www.youtube.com/iframe_api';
+  tag.src = 'https://www.youtube.com/iframe_api';
   document.head.appendChild(tag);
 
   window.onYouTubeIframeAPIReady = function () {
     const START = 5;
-    const END   = 35;
+    const END = 35;
     let loopTimer = null;
 
     const player = new YT.Player('hero-yt-player', {
-      videoId:     'lbokP8ITOaE',
+      videoId: 'lbokP8ITOaE',
       playerVars: {
-        autoplay:       1,
-        mute:           1,
-        controls:       0,
-        disablekb:      1,
-        fs:             0,
+        autoplay: 1,
+        mute: 1,
+        controls: 0,
+        disablekb: 1,
+        fs: 0,
         iv_load_policy: 3,
         modestbranding: 1,
-        rel:            0,
-        showinfo:       0,
-        start:          START,
-        playsinline:    1,   // essencial para iOS
+        rel: 0,
+        showinfo: 0,
+        start: START,
+        playsinline: 1,   // essencial para iOS
       },
       events: {
         onReady(e) {
@@ -1139,7 +1139,7 @@ function initHeroVideo() {
             try {
               const t = player.getCurrentTime();
               if (t >= END) player.seekTo(START, true);
-            } catch (_) {}
+            } catch (_) { }
           }, 300);
         },
 
@@ -1153,6 +1153,88 @@ function initHeroVideo() {
       },
     });
   };
+}
+
+// ─── SEÇÃO LOJA (produtos da API) ────────────────────────────────────────────
+
+async function renderSiteProducts() {
+  const container = document.getElementById('site-products-grid');
+  if (!container) return;
+
+  try {
+    const data = await apiCall('/external/v1/products');
+    const products = (data.products || []).filter(p => p.isActive !== false);
+
+    if (!products.length) {
+      container.innerHTML = '<p style="text-align:center;color:#555;padding:40px">Nenhum produto disponível no momento.</p>';
+      return;
+    }
+
+    container.innerHTML = `<div class="prod-grid">${products.map(prod => buildProductCard(prod)).join('')}</div>`;
+  } catch (err) {
+    console.error('[P47] Erro ao carregar produtos:', err.message);
+    container.innerHTML = '<p style="text-align:center;color:#555;padding:40px">Não foi possível carregar os produtos.</p>';
+  }
+}
+
+function getMainImage(prod) {
+  const imgs = prod.images || [];
+  const main = imgs.find(i => i.isMain) || imgs.sort((a, b) => a.position - b.position)[0];
+  return main?.url || null;
+}
+
+function getFirstVariant(prod) {
+  return (prod.variants || []).find(v => v.isActive !== false) || prod.variants?.[0] || null;
+}
+
+function buildProductCard(prod) {
+  const imgUrl = getMainImage(prod);
+  const variant = getFirstVariant(prod);
+  const sku = variant?.sku || '';
+  const sale = parseFloat(variant?.price?.salePrice || 0);
+  const list = parseFloat(variant?.price?.listPrice || 0);
+  const hasDisc = sale > 0 && list > 0 && sale < list;
+  const price = sale > 0 ? sale : list;
+
+  const waText = encodeURIComponent(`Olá! Tenho interesse no produto: *${prod.name}*${sku ? ` (SKU: ${sku})` : ''}`);
+  const waUrl = `https://wa.me/5512981365015?text=${waText}`;
+
+  const badge = prod.isFeatured
+    ? '<div class="prod-badge">Destaque</div>'
+    : '';
+
+  return `
+    <div class="prod-card">
+      <div class="prod-photo">
+        ${imgUrl
+      ? `<img src="${imgUrl}" alt="${prod.name}" class="prod-img">`
+      : `<div class="prod-photo-placeholder">
+               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".4">
+                 <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                 <polyline points="21 15 16 10 5 21"/>
+               </svg>
+             </div>`
+    }
+        ${badge}
+        ${price > 0 ? `<div class="prod-price-badge">${fmtCurrency(price)}</div>` : ''}
+      </div>
+      <div class="prod-body">
+        <div class="prod-name">${prod.name}</div>
+        ${prod.description ? `<p class="prod-desc">${prod.description}</p>` : ''}
+        <div class="prod-footer">
+          <div class="prod-price-wrap">
+            ${hasDisc ? `<span class="prod-list-price">${fmtCurrency(list)}</span>` : ''}
+            ${price > 0 ? `<span class="prod-sale-price">${fmtCurrency(price)}</span>` : ''}
+          </div>
+          <a href="${waUrl}" target="_blank" rel="noopener" class="prod-buy-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Comprar
+          </a>
+        </div>
+      </div>
+    </div>`;
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
@@ -1193,7 +1275,7 @@ async function init() {
     });
   }
 
-  // Carregar dados da API
+  // Carregar dados da API em paralelo
   try {
     const [svcData, empData] = await Promise.all([
       apiCall('/external/v1/services'),
@@ -1211,6 +1293,9 @@ async function init() {
       '<p style="text-align:center;color:#666;padding:40px">Erro ao carregar serviços. Agende pelo WhatsApp.</p>';
     document.getElementById('site-team-grid').innerHTML = '';
   }
+
+  // Produtos — carregado independentemente para não bloquear o resto
+  renderSiteProducts();
 }
 
 document.addEventListener('DOMContentLoaded', init);
