@@ -200,6 +200,9 @@
           realizados por profissionais certificados.</p>
       </div>
 
+      <!-- Filtro de categorias — populado via JS após carregar a API -->
+      <div id="site-services-filter" style="padding:0 1rem"></div>
+
       <div id="site-services-grid">
         <div class="modal-spinner-wrap">
           <div class="spinner"></div>
@@ -433,27 +436,26 @@
             </div>
 
           </div>
-          <div style="margin-top:36px">
-            <a href="https://wa.me/5512981365015" target="_blank" rel="noopener"
-              style="display:inline-block;background:var(--gold);color:var(--black);text-decoration:none;padding:14px 28px;font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;border-radius:2px">
-              Falar no WhatsApp
-            </a>
-          </div>
+
         </div>
 
-        <div style="background:#161616;border:1px solid #2a2a2a;border-radius:4px;overflow:hidden;position:relative">
+        <!-- div2: Street View na coluna direita -->
+        <div style="border:1px solid #2a2a2a;border-radius:4px;overflow:hidden;padding:10px">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4515.632529445664!2d-45.9093907751725!3d-23.205426973360147!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cc4a7772dab253%3A0x5c50ee87825188ee!2sBarbearia%20P47!5e0!3m2!1spt-BR!2sus!4v1776720201329!5m2!1spt-BR!2sus"
-            width="100%" height="400" style="border:0;display:block" allowfullscreen loading="lazy"
+            src="https://www.google.com/maps/embed?pb=!4v1777134792212!6m8!1m7!1sCAoSFkNJSE0wb2dLRUlDQWdJQ1gtcWl1Smc.!2m2!1d-23.20608631368946!2d-45.90105196413815!3f307.71920587335734!4f-3.825936316782105!5f0.7820865974627469"
+            width="100%" height="100%" style="border:0;display:block;min-height:360px" allowfullscreen loading="lazy"
             referrerpolicy="no-referrer-when-downgrade">
           </iframe>
-          <div style="padding:16px;text-align:center">
-            <a href="https://maps.google.com/?q=Barbearia+P47+São+José+dos+Campos" target="_blank" rel="noopener"
-              style="color:var(--gold);font-size:12px;text-decoration:none;border:1px solid var(--gold-dark);padding:8px 16px;border-radius:2px;font-weight:500;display:inline-block">
-              Ver no Google Maps →
-            </a>
-          </div>
         </div>
+      </div>
+      <div style="margin-top:36px;" class="gold-line"></div>
+      <!-- div3: mapa Google Maps abaixo das duas colunas, largura total -->
+      <div style="margin-top:16px;border:1px solid #2a2a2a;border-radius:4px;overflow:hidden">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4741.3367500095765!2d-45.903685824680636!3d-23.20609327904563!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94cc4a7772dab253%3A0x5c50ee87825188ee!2sBarbearia%20P47!5e1!3m2!1spt-BR!2sbr!4v1777135874310!5m2!1spt-BR!2sbr"
+          width="100%" height="220" style="border:0;display:block" allowfullscreen loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
       </div>
     </div>
     <div class="gold-line"></div>
@@ -522,28 +524,34 @@
         <div id="step-indicator" class="step-indicator"></div>
       </div>
 
-      <!-- Carrinho resumo (aparece ao adicionar itens) -->
+      <!-- =====================================================================
+           FEATURE DESATIVADA — CARRINHO MULTI-SERVIÇO
+           Descomente abaixo para reativar o carrinho de agendamentos múltiplos.
+           =====================================================================
       <div id="carrinho-resumo" class="carrinho-resumo" style="display:none">
         <div class="carrinho-header">
           <span>🛒 Carrinho de Agendamentos</span>
         </div>
         <div id="carrinho-lista" class="carrinho-lista"></div>
       </div>
+           ===================================================================== -->
 
       <!-- Body -->
       <div class="booking-modal-body">
 
-        <!-- Step 1: Categorias -->
+        <!-- ===================================================================
+             FEATURE DESATIVADA — Steps 1 e 2 do fluxo de carrinho
+             Descomente para reativar seleção de categoria e serviço no modal.
+             ===================================================================
         <div id="step-1" class="step-panel">
           <div id="step-1-content"></div>
         </div>
-
-        <!-- Step 2: Serviços -->
         <div id="step-2" class="step-panel" style="display:none">
           <div id="step-2-content"></div>
         </div>
+             =================================================================== -->
 
-        <!-- Step 3: Funcionário -->
+        <!-- Step 3: Funcionário — primeiro step do novo fluxo -->
         <div id="step-3" class="step-panel" style="display:none">
           <div id="step-3-content"></div>
         </div>
@@ -553,7 +561,10 @@
           <div id="step-4-content"></div>
         </div>
 
-        <!-- Step 5: Decisão -->
+        <!-- ===================================================================
+             FEATURE DESATIVADA — Step 5: Decisão do carrinho
+             Descomente para reativar a pergunta "deseja adicionar mais serviço?".
+             ===================================================================
         <div id="step-5" class="step-panel" style="display:none">
           <div class="decision-panel">
             <div class="decision-icon">🗓️</div>
@@ -570,6 +581,7 @@
             </div>
           </div>
         </div>
+             =================================================================== -->
 
         <!-- Step 6: Dados do cliente -->
         <div id="step-6" class="step-panel" style="display:none">
@@ -613,7 +625,23 @@
               Dúvidas? <a href="https://wa.me/5512981365015" style="color:var(--gold);text-decoration:none"
                 target="_blank" rel="noopener">(12) 98136-5015</a>
             </div>
-            <button id="btn-success-close" class="btn-gold-solid">Fechar</button>
+
+            <!-- CTA da loja — visível somente após confirmação (JS faz display:flex) -->
+            <div id="success-store-cta" class="store-cta-confirm" style="display:none">
+              <img src="assets/tonico_capila.jpg" alt="Produtos P47" class="store-cta-img">
+              <div class="store-cta-confirm-content">
+                <p class="store-cta-confirm-text">
+                  Aproveite e <strong>leve um produto da nossa loja com desconto especial</strong> —
+                  os mesmos produtos usados pelos nossos profissionais, para cuidar do seu estilo em casa!
+                </p>
+                <a href="#loja" class="store-cta-confirm-btn"
+                  onclick="document.getElementById('btn-success-close').click()">
+                  Ver Produtos da Loja →
+                </a>
+              </div>
+            </div>
+
+            <button id="btn-success-close" class="btn-gold-solid" style="margin-top:20px">Fechar</button>
           </div>
         </div>
 
