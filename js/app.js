@@ -796,6 +796,14 @@ function navMonth(dir) {
 
 // ─── STEP 6: DADOS DO CLIENTE ────────────────────────────────────────────────
 
+function maskPhone(value) {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length <= 2)  return digits.replace(/(\d{0,2})/, '($1');
+  if (digits.length <= 6)  return digits.replace(/(\d{2})(\d{0,4})/, '($1) $2');
+  if (digits.length <= 10) return digits.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+  return digits.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+}
+
 function renderStep6() {
   const nomeInput  = document.getElementById('cliente-nome');
   const foneInput  = document.getElementById('cliente-telefone');
@@ -812,7 +820,12 @@ function renderStep6() {
   foneInput.replaceWith(fone2);
 
   nome2.addEventListener('input', () => { state.clienteNome      = nome2.value; updateModalFooter(); });
-  fone2.addEventListener('input', () => { state.clienteTelefone  = fone2.value; updateModalFooter(); });
+  fone2.addEventListener('input', () => {
+    const masked = maskPhone(fone2.value);
+    fone2.value = masked;
+    state.clienteTelefone = masked;
+    updateModalFooter();
+  });
 
   if (emailInput) {
     const email2 = emailInput.cloneNode(true);
